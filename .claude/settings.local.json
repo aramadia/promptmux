@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(./node_modules/.bin/electron:*)",
+      "Bash(npm ls:*)",
+      "Bash(cat:*)",
+      "Bash(node -e:*)",
+      "Bash(codesign:*)",
+      "Bash(npm install:*)"
+    ]
+  }
+}

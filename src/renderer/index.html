@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+    />
+    <title>PromptMux</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="input-container">
+      <textarea
+        id="prompt-input"
+        placeholder="Type your prompt here and send to all AI assistants..."
+        rows="2"
+      ></textarea>
+      <button id="send-btn">Send to All</button>
+    </div>
+    <script>var exports = {};</script>
+    <script src="index.js"></script>
+  </body>
+</html>
