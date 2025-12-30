@@ -18,6 +18,31 @@ npm start
 
 ---
 
+## Security & Privacy
+
+**What this app does:**
+- Loads AI websites (ChatGPT, Gemini, Claude) in embedded browser views
+- Injects your prompt text into each AI's input field and clicks send
+- Opens external links in your default browser (not inside the app)
+
+**What this app does NOT do:**
+- No telemetry, analytics, or tracking
+- No data sent anywhere except the AI services you're looking at
+- No background processes after you close the app
+- No access to your filesystem (only Electron's session storage for login cookies)
+
+**Audit the code yourself:**
+- ~750 lines of TypeScript total
+- All source code in `src/` - nothing hidden or obfuscated
+- Build from source: `git clone && npm install && npm start`
+
+**Electron security settings:**
+- `contextIsolation: true` - AI websites cannot access Node.js APIs
+- `nodeIntegration: false` - AI websites cannot run arbitrary code
+- `sandbox: false` - Required for prompt injection, but websites still can't access Node.js
+
+---
+
 ## Architecture
 
 PromptMux is built with [Electron](https://www.electronjs.org/), which combines Chromium (for rendering web content) and Node.js (for backend functionality) into a single desktop application.
