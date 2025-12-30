@@ -1,7 +1,7 @@
 {
   "name": "promptmux",
   "productName": "PromptMux",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Multi-AI chat interface - send prompts to ChatGPT, Gemini, and Claude simultaneously",
   "main": "dist/main/index.js",
   "scripts": {
