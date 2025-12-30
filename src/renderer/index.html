@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
     />
     <title>PromptMux</title>
     <link rel="stylesheet" href="styles.css" />
@@ -18,7 +18,7 @@
       ></textarea>
       <button id="send-btn">Send to All</button>
     </div>
-    <script>var exports = {};</script>
+    <script src="shim.js"></script>
     <script src="index.js"></script>
   </body>
 </html>
