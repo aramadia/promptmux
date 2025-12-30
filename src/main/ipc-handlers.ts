@@ -61,4 +61,44 @@ export function setupIpcHandlers(): void {
 
     return results;
   });
+
+  ipcMain.handle('new-chat', async (): Promise<PromptResult[]> => {
+    console.log('[Main] Received new-chat request');
+    const views = getAIViews();
+    const results: PromptResult[] = [];
+
+    const promises = views.map(async (aiView) => {
+      try {
+        console.log(`[Main] Reloading ${aiView.service} to ${aiView.url}`);
+        await aiView.view.webContents.loadURL(aiView.url);
+        return {
+          service: aiView.service,
+          success: true,
+        };
+      } catch (error) {
+        console.error(`[Main] ${aiView.service} reload error:`, error);
+        return {
+          service: aiView.service,
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        };
+      }
+    });
+
+    const settledResults = await Promise.allSettled(promises);
+
+    for (const result of settledResults) {
+      if (result.status === 'fulfilled') {
+        results.push(result.value);
+      } else {
+        results.push({
+          service: 'unknown',
+          success: false,
+          error: result.reason?.message || 'Promise rejected',
+        });
+      }
+    }
+
+    return results;
+  });
 }

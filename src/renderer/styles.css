@@ -31,6 +31,7 @@ body {
   color: #fff;
   resize: none;
   font-family: inherit;
+  min-height: 80px;
 }
 
 #prompt-input:focus {
@@ -64,6 +65,32 @@ body {
 }
 
 #send-btn:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+#new-chat-btn {
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  background: #6b7280;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+#new-chat-btn:hover {
+  background: #5b6270;
+}
+
+#new-chat-btn:active {
+  background: #4b5260;
+}
+
+#new-chat-btn:disabled {
   background: #555;
   cursor: not-allowed;
 }

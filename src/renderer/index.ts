@@ -9,6 +9,7 @@ interface PromptResult {
 
 interface PromptMuxAPI {
   sendPrompt: (prompt: string) => Promise<PromptResult[]>;
+  newChat: () => Promise<PromptResult[]>;
 }
 
 declare global {
@@ -19,6 +20,7 @@ declare global {
 
 const promptInput = document.getElementById('prompt-input') as HTMLTextAreaElement;
 const sendBtn = document.getElementById('send-btn') as HTMLButtonElement;
+const newChatBtn = document.getElementById('new-chat-btn') as HTMLButtonElement;
 
 async function sendPrompt(): Promise<void> {
   const prompt = promptInput.value.trim();
@@ -33,6 +35,7 @@ async function sendPrompt(): Promise<void> {
   }
 
   sendBtn.disabled = true;
+  newChatBtn.disabled = true;
   sendBtn.textContent = 'Sending...';
 
   try {
@@ -52,11 +55,47 @@ async function sendPrompt(): Promise<void> {
     console.error('[Renderer] Failed to send prompt:', error);
   } finally {
     sendBtn.disabled = false;
+    newChatBtn.disabled = false;
     sendBtn.textContent = 'Send to All';
   }
 }
 
+async function newChat(): Promise<void> {
+  console.log('[Renderer] Starting new chat');
+
+  if (typeof window.api === 'undefined') {
+    console.error('[Renderer] window.api is undefined - preload script did not load!');
+    return;
+  }
+
+  newChatBtn.disabled = true;
+  sendBtn.disabled = true;
+  newChatBtn.textContent = 'Reloading...';
+
+  try {
+    const results = await window.api.newChat();
+    console.log('[Renderer] New chat results:', results);
+
+    results.forEach((result: PromptResult) => {
+      if (result.success) {
+        console.log(`${result.service}: reloaded successfully`);
+      } else {
+        console.error(`${result.service}: reload failed -`, result.error);
+      }
+    });
+
+    promptInput.value = '';
+  } catch (error) {
+    console.error('[Renderer] Failed to start new chat:', error);
+  } finally {
+    newChatBtn.disabled = false;
+    sendBtn.disabled = false;
+    newChatBtn.textContent = 'New Chat';
+  }
+}
+
 sendBtn.addEventListener('click', sendPrompt);
+newChatBtn.addEventListener('click', newChat);
 
 promptInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && !e.shiftKey) {

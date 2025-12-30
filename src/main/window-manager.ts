@@ -14,7 +14,7 @@ const AI_SERVICES: { service: ServiceName; url: string }[] = [
   { service: 'claude', url: 'https://claude.ai/new' },
 ];
 
-const INPUT_BAR_HEIGHT = 80;
+const INPUT_BAR_HEIGHT = 120;
 
 let mainWindow: BaseWindow | null = null;
 let aiViews: AIView[] = [];
