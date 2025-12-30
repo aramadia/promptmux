@@ -1,5 +1,6 @@
-import { BaseWindow, WebContentsView } from 'electron';
+import { BaseWindow, WebContentsView, app } from 'electron';
 import * as path from 'path';
+import * as fs from 'fs';
 import { getPartition, ServiceName } from './session-manager';
 
 interface AIView {
@@ -15,10 +16,40 @@ const AI_SERVICES: { service: ServiceName; url: string }[] = [
 ];
 
 const INPUT_BAR_HEIGHT = 120;
+const SAVED_URLS_FILE = path.join(app.getPath('userData'), 'last-urls.json');
 
 let mainWindow: BaseWindow | null = null;
 let aiViews: AIView[] = [];
 let inputBarView: WebContentsView | null = null;
+
+interface SavedUrls {
+  [service: string]: string;
+}
+
+function loadSavedUrls(): SavedUrls {
+  try {
+    if (fs.existsSync(SAVED_URLS_FILE)) {
+      const data = fs.readFileSync(SAVED_URLS_FILE, 'utf-8');
+      return JSON.parse(data);
+    }
+  } catch (error) {
+    console.error('[WindowManager] Failed to load saved URLs:', error);
+  }
+  return {};
+}
+
+function saveCurrentUrls(): void {
+  try {
+    const urls: SavedUrls = {};
+    aiViews.forEach((aiView) => {
+      urls[aiView.service] = aiView.view.webContents.getURL();
+    });
+    fs.writeFileSync(SAVED_URLS_FILE, JSON.stringify(urls, null, 2));
+    console.log('[WindowManager] Saved URLs:', urls);
+  } catch (error) {
+    console.error('[WindowManager] Failed to save URLs:', error);
+  }
+}
 
 export function createMainWindow(): BaseWindow {
   mainWindow = new BaseWindow({
@@ -32,6 +63,10 @@ export function createMainWindow(): BaseWindow {
   const bounds = mainWindow.getContentBounds();
   const viewWidth = Math.floor(bounds.width / 3);
   const viewHeight = bounds.height - INPUT_BAR_HEIGHT;
+
+  // Load saved URLs from previous session
+  const savedUrls = loadSavedUrls();
+  console.log('[WindowManager] Loaded saved URLs:', savedUrls);
 
   // Create AI service views
   AI_SERVICES.forEach((config, index) => {
@@ -55,7 +90,19 @@ export function createMainWindow(): BaseWindow {
       height: viewHeight,
     });
 
-    view.webContents.loadURL(config.url);
+    // Load saved URL if available, otherwise use default
+    const urlToLoad = savedUrls[config.service] || config.url;
+    console.log(`[WindowManager] Loading ${config.service} with URL:`, urlToLoad);
+    view.webContents.loadURL(urlToLoad);
+
+    // Save URLs when navigation completes
+    view.webContents.on('did-navigate', () => {
+      saveCurrentUrls();
+    });
+
+    view.webContents.on('did-navigate-in-page', () => {
+      saveCurrentUrls();
+    });
 
     // Enable right-click context menu with Inspect Element
     view.webContents.on('context-menu', (_, params) => {
@@ -122,6 +169,11 @@ export function createMainWindow(): BaseWindow {
       width: newBounds.width,
       height: INPUT_BAR_HEIGHT,
     });
+  });
+
+  mainWindow.on('close', () => {
+    // Save URLs before closing
+    saveCurrentUrls();
   });
 
   mainWindow.on('closed', () => {
