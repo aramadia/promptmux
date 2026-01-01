@@ -1,9 +1,9 @@
-import { session, Session } from 'electron';
+import { session, Session } from "electron";
 
 const PARTITIONS = {
-  chatgpt: 'persist:chatgpt',
-  gemini: 'persist:gemini',
-  claude: 'persist:claude',
+  chatgpt: "persist:chatgpt",
+  gemini: "persist:gemini",
+  claude: "persist:claude",
 } as const;
 
 export type ServiceName = keyof typeof PARTITIONS;

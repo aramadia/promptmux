@@ -21,22 +21,26 @@ npm start
 ## Security & Privacy
 
 **What this app does:**
+
 - Loads AI websites (ChatGPT, Gemini, Claude) in embedded browser views
 - Injects your prompt text into each AI's input field and clicks send
 - Opens external links in your default browser (not inside the app)
 
 **What this app does NOT do:**
+
 - No telemetry, analytics, or tracking
 - No data sent anywhere except the AI services you're looking at
 - No background processes after you close the app
 - No access to your filesystem (only Electron's session storage for login cookies)
 
 **Audit the code yourself:**
+
 - ~750 lines of TypeScript total
 - All source code in `src/` - nothing hidden or obfuscated
 - Build from source: `git clone && npm install && npm start`
 
 **Electron security settings:**
+
 - `contextIsolation: true` - AI websites cannot access Node.js APIs
 - `nodeIntegration: false` - AI websites cannot run arbitrary code
 - `sandbox: false` - Required for prompt injection, but websites still can't access Node.js
@@ -91,16 +95,17 @@ Instead, they send messages:
 
 ```typescript
 // Renderer sends a message to Main
-ipcRenderer.invoke('send-prompt', 'Hello AI');
+ipcRenderer.invoke("send-prompt", "Hello AI");
 
 // Main process receives and handles it
-ipcMain.handle('send-prompt', async (event, prompt) => {
+ipcMain.handle("send-prompt", async (event, prompt) => {
   // Do something with the prompt
   return { success: true };
 });
 ```
 
 In PromptMux:
+
 1. **Input bar renderer** calls `window.api.sendPrompt(text)`
 2. **Preload script** forwards this via `ipcRenderer.invoke('send-prompt', text)`
 3. **Main process** receives it and calls `executeJavaScript()` on each AI view
@@ -162,11 +167,13 @@ Unlike traditional Electron apps that use `BrowserWindow`, PromptMux uses `BaseW
 #### Session Partitions
 
 Each AI service has its own persistent session partition:
+
 - `persist:chatgpt`
 - `persist:gemini`
 - `persist:claude`
 
 This means:
+
 - Cookies and login state are isolated per service
 - Sessions persist between app restarts (stored in `~/Library/Application Support/promptmux/`)
 - Services can't see each other's authentication data
@@ -174,6 +181,7 @@ This means:
 #### DOM Injection
 
 The preload scripts inject prompts into each AI's input field by:
+
 1. Finding the input element using CSS selectors
 2. Setting the text content (handling ProseMirror editors that wrap text in `<p>` tags)
 3. Dispatching input events to notify the framework
@@ -185,30 +193,30 @@ The preload scripts inject prompts into each AI's input field by:
 
 ### Technical Decisions
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Framework** | Electron | Need to embed external websites (ChatGPT, Gemini, Claude) which isn't possible in a regular web app due to CORS/iframe restrictions |
-| **Window type** | BaseWindow + WebContentsView | Allows multiple independent web views in one window, vs BrowserWindow which is limited to one page |
-| **Session storage** | Persistent partitions | Users shouldn't have to log in every time they open the app |
-| **Module system** | CommonJS | Electron's main process and preload scripts run in Node.js which uses CommonJS. Added `var exports = {}` shim for the renderer |
-| **TypeScript** | Yes | Type safety helps catch errors, especially with Electron's complex API |
-| **Bundler** | None (tsc only) | Kept it simple since the renderer code is minimal. A bundler (webpack/esbuild) would be needed for larger renderer codebases |
-| **DOM injection approach** | CSS selectors + events | More reliable than simulating keystrokes; handles React/ProseMirror controlled inputs |
-| **Preload per service** | Separate files | Each AI has different DOM structure, so separate preloads allow customized selectors |
-| **Security settings** | contextIsolation: true, nodeIntegration: false | Follows Electron security best practices; external websites shouldn't have Node.js access |
-| **sandbox: false** | Disabled for AI views | Required for preload scripts to work with `executeJavaScript()` |
+| Decision                   | Choice                                         | Rationale                                                                                                                           |
+| -------------------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Framework**              | Electron                                       | Need to embed external websites (ChatGPT, Gemini, Claude) which isn't possible in a regular web app due to CORS/iframe restrictions |
+| **Window type**            | BaseWindow + WebContentsView                   | Allows multiple independent web views in one window, vs BrowserWindow which is limited to one page                                  |
+| **Session storage**        | Persistent partitions                          | Users shouldn't have to log in every time they open the app                                                                         |
+| **Module system**          | CommonJS                                       | Electron's main process and preload scripts run in Node.js which uses CommonJS. Added `var exports = {}` shim for the renderer      |
+| **TypeScript**             | Yes                                            | Type safety helps catch errors, especially with Electron's complex API                                                              |
+| **Bundler**                | None (tsc only)                                | Kept it simple since the renderer code is minimal. A bundler (webpack/esbuild) would be needed for larger renderer codebases        |
+| **DOM injection approach** | CSS selectors + events                         | More reliable than simulating keystrokes; handles React/ProseMirror controlled inputs                                               |
+| **Preload per service**    | Separate files                                 | Each AI has different DOM structure, so separate preloads allow customized selectors                                                |
+| **Security settings**      | contextIsolation: true, nodeIntegration: false | Follows Electron security best practices; external websites shouldn't have Node.js access                                           |
+| **sandbox: false**         | Disabled for AI views                          | Required for preload scripts to work with `executeJavaScript()`                                                                     |
 
 ### Product Decisions
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Layout** | Fixed equal thirds | Simplicity over flexibility; resizable panels add complexity without much benefit |
-| **Input method** | Single textarea + button | Clean, obvious UX; no need for keyboard shortcuts to send |
-| **Which AIs** | ChatGPT, Gemini, Claude | The three most popular/capable consumer AI assistants |
-| **Authentication** | User logs in via embedded webview | Avoids dealing with OAuth/API keys; uses the same login flow as the real websites |
-| **No API integration** | Webview only | Using APIs would require users to set up API keys and pay for usage; webviews use existing subscriptions |
-| **DevTools access** | Right-click context menu | Essential for debugging selector issues when AI sites update their DOM |
-| **No response scraping** | Injection only | Scraping responses would be complex and fragile; users can read them directly |
+| Decision                 | Choice                            | Rationale                                                                                                |
+| ------------------------ | --------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Layout**               | Fixed equal thirds                | Simplicity over flexibility; resizable panels add complexity without much benefit                        |
+| **Input method**         | Single textarea + button          | Clean, obvious UX; no need for keyboard shortcuts to send                                                |
+| **Which AIs**            | ChatGPT, Gemini, Claude           | The three most popular/capable consumer AI assistants                                                    |
+| **Authentication**       | User logs in via embedded webview | Avoids dealing with OAuth/API keys; uses the same login flow as the real websites                        |
+| **No API integration**   | Webview only                      | Using APIs would require users to set up API keys and pay for usage; webviews use existing subscriptions |
+| **DevTools access**      | Right-click context menu          | Essential for debugging selector issues when AI sites update their DOM                                   |
+| **No response scraping** | Injection only                    | Scraping responses would be complex and fragile; users can read them directly                            |
 
 ### Trade-offs & Limitations
 
