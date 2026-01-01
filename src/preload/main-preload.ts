@@ -1,11 +1,11 @@
-import { contextBridge, ipcRenderer } from 'electron';
-import { PromptResult } from '../shared/types';
+import { contextBridge, ipcRenderer } from "electron";
+import { PromptResult } from "../shared/types";
 
-contextBridge.exposeInMainWorld('api', {
+contextBridge.exposeInMainWorld("api", {
   sendPrompt: (prompt: string): Promise<PromptResult[]> => {
-    return ipcRenderer.invoke('send-prompt', prompt);
+    return ipcRenderer.invoke("send-prompt", prompt);
   },
   newChat: (): Promise<PromptResult[]> => {
-    return ipcRenderer.invoke('new-chat');
+    return ipcRenderer.invoke("new-chat");
   },
 });

@@ -1,7 +1,7 @@
-import { BaseWindow, WebContentsView, app } from 'electron';
-import * as path from 'path';
-import * as fs from 'fs';
-import { getPartition, ServiceName } from './session-manager';
+import { BaseWindow, WebContentsView, app } from "electron";
+import * as path from "path";
+import * as fs from "fs";
+import { getPartition, ServiceName } from "./session-manager";
 
 interface AIView {
   service: ServiceName;
@@ -10,13 +10,13 @@ interface AIView {
 }
 
 const AI_SERVICES: { service: ServiceName; url: string }[] = [
-  { service: 'chatgpt', url: 'https://chatgpt.com' },
-  { service: 'gemini', url: 'https://gemini.google.com/app' },
-  { service: 'claude', url: 'https://claude.ai/new' },
+  { service: "chatgpt", url: "https://chatgpt.com" },
+  { service: "gemini", url: "https://gemini.google.com/app" },
+  { service: "claude", url: "https://claude.ai/new" },
 ];
 
 const INPUT_BAR_HEIGHT = 120;
-const SAVED_URLS_FILE = path.join(app.getPath('userData'), 'last-urls.json');
+const SAVED_URLS_FILE = path.join(app.getPath("userData"), "last-urls.json");
 
 let mainWindow: BaseWindow | null = null;
 let aiViews: AIView[] = [];
@@ -29,11 +29,11 @@ interface SavedUrls {
 function loadSavedUrls(): SavedUrls {
   try {
     if (fs.existsSync(SAVED_URLS_FILE)) {
-      const data = fs.readFileSync(SAVED_URLS_FILE, 'utf-8');
+      const data = fs.readFileSync(SAVED_URLS_FILE, "utf-8");
       return JSON.parse(data);
     }
   } catch (error) {
-    console.error('[WindowManager] Failed to load saved URLs:', error);
+    console.error("[WindowManager] Failed to load saved URLs:", error);
   }
   return {};
 }
@@ -45,9 +45,9 @@ function saveCurrentUrls(): void {
       urls[aiView.service] = aiView.view.webContents.getURL();
     });
     fs.writeFileSync(SAVED_URLS_FILE, JSON.stringify(urls, null, 2));
-    console.log('[WindowManager] Saved URLs:', urls);
+    console.log("[WindowManager] Saved URLs:", urls);
   } catch (error) {
-    console.error('[WindowManager] Failed to save URLs:', error);
+    console.error("[WindowManager] Failed to save URLs:", error);
   }
 }
 
@@ -57,7 +57,7 @@ export function createMainWindow(): BaseWindow {
     height: 1000,
     minWidth: 1200,
     minHeight: 600,
-    title: 'PromptMux',
+    title: "PromptMux",
   });
 
   const bounds = mainWindow.getContentBounds();
@@ -66,7 +66,7 @@ export function createMainWindow(): BaseWindow {
 
   // Load saved URLs from previous session
   const savedUrls = loadSavedUrls();
-  console.log('[WindowManager] Loaded saved URLs:', savedUrls);
+  console.log("[WindowManager] Loaded saved URLs:", savedUrls);
 
   // Create AI service views
   AI_SERVICES.forEach((config, index) => {
@@ -75,7 +75,10 @@ export function createMainWindow(): BaseWindow {
     const view = new WebContentsView({
       webPreferences: {
         partition,
-        preload: path.join(__dirname, `../preload/${config.service}-preload.js`),
+        preload: path.join(
+          __dirname,
+          `../preload/${config.service}-preload.js`,
+        ),
         contextIsolation: true,
         nodeIntegration: false,
         sandbox: false, // Need to disable for preload to work with executeJavaScript
@@ -92,25 +95,34 @@ export function createMainWindow(): BaseWindow {
 
     // Load saved URL if available, otherwise use default
     const urlToLoad = savedUrls[config.service] || config.url;
-    console.log(`[WindowManager] Loading ${config.service} with URL:`, urlToLoad);
+    console.log(
+      `[WindowManager] Loading ${config.service} with URL:`,
+      urlToLoad,
+    );
     view.webContents.loadURL(urlToLoad);
 
     // Save URLs when navigation completes
-    view.webContents.on('did-navigate', () => {
+    view.webContents.on("did-navigate", () => {
       saveCurrentUrls();
     });
 
-    view.webContents.on('did-navigate-in-page', () => {
+    view.webContents.on("did-navigate-in-page", () => {
       saveCurrentUrls();
     });
 
     // Enable right-click context menu with Inspect Element
-    view.webContents.on('context-menu', (_, params) => {
-      const { Menu } = require('electron');
+    view.webContents.on("context-menu", (_, params) => {
+      const { Menu } = require("electron");
       Menu.buildFromTemplate([
-        { label: 'Inspect Element', click: () => view.webContents.inspectElement(params.x, params.y) },
-        { type: 'separator' },
-        { label: 'Open DevTools', click: () => view.webContents.openDevTools({ mode: 'detach' }) },
+        {
+          label: "Inspect Element",
+          click: () => view.webContents.inspectElement(params.x, params.y),
+        },
+        { type: "separator" },
+        {
+          label: "Open DevTools",
+          click: () => view.webContents.openDevTools({ mode: "detach" }),
+        },
       ]).popup();
     });
 
@@ -120,7 +132,7 @@ export function createMainWindow(): BaseWindow {
   // Create input bar view
   inputBarView = new WebContentsView({
     webPreferences: {
-      preload: path.join(__dirname, '../preload/main-preload.js'),
+      preload: path.join(__dirname, "../preload/main-preload.js"),
       contextIsolation: true,
       nodeIntegration: false,
     },
@@ -134,20 +146,29 @@ export function createMainWindow(): BaseWindow {
     height: INPUT_BAR_HEIGHT,
   });
 
-  inputBarView.webContents.loadFile(path.join(__dirname, '../renderer/index.html'));
+  inputBarView.webContents.loadFile(
+    path.join(__dirname, "../renderer/index.html"),
+  );
 
   // Enable right-click context menu for input bar
-  inputBarView.webContents.on('context-menu', (_, params) => {
-    const { Menu } = require('electron');
+  inputBarView.webContents.on("context-menu", (_, params) => {
+    const { Menu } = require("electron");
     Menu.buildFromTemplate([
-      { label: 'Inspect Element', click: () => inputBarView!.webContents.inspectElement(params.x, params.y) },
-      { type: 'separator' },
-      { label: 'Open DevTools', click: () => inputBarView!.webContents.openDevTools({ mode: 'detach' }) },
+      {
+        label: "Inspect Element",
+        click: () =>
+          inputBarView!.webContents.inspectElement(params.x, params.y),
+      },
+      { type: "separator" },
+      {
+        label: "Open DevTools",
+        click: () => inputBarView!.webContents.openDevTools({ mode: "detach" }),
+      },
     ]).popup();
   });
 
   // Handle window resize
-  mainWindow.on('resize', () => {
+  mainWindow.on("resize", () => {
     if (!mainWindow) return;
 
     const newBounds = mainWindow.getContentBounds();
@@ -171,12 +192,12 @@ export function createMainWindow(): BaseWindow {
     });
   });
 
-  mainWindow.on('close', () => {
+  mainWindow.on("close", () => {
     // Save URLs before closing
     saveCurrentUrls();
   });
 
-  mainWindow.on('closed', () => {
+  mainWindow.on("closed", () => {
     mainWindow = null;
     aiViews = [];
     inputBarView = null;

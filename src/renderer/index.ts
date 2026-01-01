@@ -18,29 +18,33 @@ declare global {
   }
 }
 
-const promptInput = document.getElementById('prompt-input') as HTMLTextAreaElement;
-const sendBtn = document.getElementById('send-btn') as HTMLButtonElement;
-const newChatBtn = document.getElementById('new-chat-btn') as HTMLButtonElement;
+const promptInput = document.getElementById(
+  "prompt-input",
+) as HTMLTextAreaElement;
+const sendBtn = document.getElementById("send-btn") as HTMLButtonElement;
+const newChatBtn = document.getElementById("new-chat-btn") as HTMLButtonElement;
 
 async function sendPrompt(): Promise<void> {
   const prompt = promptInput.value.trim();
   if (!prompt) return;
 
-  console.log('[Renderer] Sending prompt:', prompt.substring(0, 50));
-  console.log('[Renderer] window.api exists:', typeof window.api);
+  console.log("[Renderer] Sending prompt:", prompt.substring(0, 50));
+  console.log("[Renderer] window.api exists:", typeof window.api);
 
-  if (typeof window.api === 'undefined') {
-    console.error('[Renderer] window.api is undefined - preload script did not load!');
+  if (typeof window.api === "undefined") {
+    console.error(
+      "[Renderer] window.api is undefined - preload script did not load!",
+    );
     return;
   }
 
   sendBtn.disabled = true;
   newChatBtn.disabled = true;
-  sendBtn.textContent = 'Sending...';
+  sendBtn.textContent = "Sending...";
 
   try {
     const results = await window.api.sendPrompt(prompt);
-    console.log('[Renderer] Got results:', results);
+    console.log("[Renderer] Got results:", results);
 
     results.forEach((result: PromptResult) => {
       if (result.success) {
@@ -50,31 +54,33 @@ async function sendPrompt(): Promise<void> {
       }
     });
 
-    promptInput.value = '';
+    promptInput.value = "";
   } catch (error) {
-    console.error('[Renderer] Failed to send prompt:', error);
+    console.error("[Renderer] Failed to send prompt:", error);
   } finally {
     sendBtn.disabled = false;
     newChatBtn.disabled = false;
-    sendBtn.textContent = 'Send to All';
+    sendBtn.textContent = "Send to All";
   }
 }
 
 async function newChat(): Promise<void> {
-  console.log('[Renderer] Starting new chat');
+  console.log("[Renderer] Starting new chat");
 
-  if (typeof window.api === 'undefined') {
-    console.error('[Renderer] window.api is undefined - preload script did not load!');
+  if (typeof window.api === "undefined") {
+    console.error(
+      "[Renderer] window.api is undefined - preload script did not load!",
+    );
     return;
   }
 
   newChatBtn.disabled = true;
   sendBtn.disabled = true;
-  newChatBtn.textContent = 'Reloading...';
+  newChatBtn.textContent = "Reloading...";
 
   try {
     const results = await window.api.newChat();
-    console.log('[Renderer] New chat results:', results);
+    console.log("[Renderer] New chat results:", results);
 
     results.forEach((result: PromptResult) => {
       if (result.success) {
@@ -84,24 +90,24 @@ async function newChat(): Promise<void> {
       }
     });
 
-    promptInput.value = '';
+    promptInput.value = "";
   } catch (error) {
-    console.error('[Renderer] Failed to start new chat:', error);
+    console.error("[Renderer] Failed to start new chat:", error);
   } finally {
     newChatBtn.disabled = false;
     sendBtn.disabled = false;
-    newChatBtn.textContent = 'New Chat';
+    newChatBtn.textContent = "New Chat";
   }
 }
 
-sendBtn.addEventListener('click', sendPrompt);
-newChatBtn.addEventListener('click', newChat);
+sendBtn.addEventListener("click", sendPrompt);
+newChatBtn.addEventListener("click", newChat);
 
-promptInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
+promptInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
     sendPrompt();
   }
 });
 
-console.log('[Renderer] Script loaded');
+console.log("[Renderer] Script loaded");
