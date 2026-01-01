@@ -34,7 +34,6 @@
             "package-lock.json"
           ];
         };
-        programs.nixfmt.enable = true;
       };
     in
       treefmtEval.config.build.wrapper);
