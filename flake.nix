@@ -34,6 +34,9 @@
         # To update: run `nix build .#checks.x86_64-linux.build` and use the hash from the error
         npmDepsHash = "sha256-bZKlgDKRYORPwswuPHhp1lcO/06bFslCx+UEi6nkKRY=";
 
+        # Skip electron binary download - we only need to verify TypeScript compiles
+        env.ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
+
         # Just verify the build compiles - don't install as runnable app
         installPhase = ''
           runHook preInstall
