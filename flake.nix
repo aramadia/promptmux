@@ -23,15 +23,28 @@
         '';
       });
 
-    # TODO: Build check temporarily disabled - needs npmDepsHash update for v0.2.0
-    # After adding semantic-release dependencies, the npmDepsHash is outdated.
-    # To re-enable and get the correct hash:
-    #   1. Restore the buildNpmPackage check below
-    #   2. Run: nix build .#checks.x86_64-linux.build
-    #   3. Copy the hash from the error message
-    #   4. Update npmDepsHash with the new hash
-    checks = forAllSystems (system: {
-      # build = pkgs.buildNpmPackage { ... };  # Temporarily disabled
+    checks = forAllSystems (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      build = pkgs.buildNpmPackage {
+        pname = "promptmux";
+        version = "0.2.0";
+        src = self;
+
+        # Placeholder hash - will be updated from CI output
+        npmDepsHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+
+        # Skip electron binary download - we only need to verify TypeScript compiles
+        env.ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
+
+        # Just verify the build compiles - don't install as runnable app
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out
+          cp -r dist $out/
+          runHook postInstall
+        '';
+      };
     });
 
     devShells = forAllSystems (system: let
