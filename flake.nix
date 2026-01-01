@@ -32,7 +32,7 @@
         src = self;
 
         # To update: run `nix build .#checks.x86_64-linux.build` and use the hash from the error
-        npmDepsHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+        npmDepsHash = "sha256-bZKlgDKRYORPwswuPHhp1lcO/06bFslCx+UEi6nkKRY=";
 
         # Don't run the default npm build, use our custom build
         buildPhase = ''
