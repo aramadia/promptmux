@@ -1,20 +1,20 @@
-import { app, BaseWindow } from 'electron';
-import { createMainWindow, getMainWindow } from './window-manager';
-import { setupIpcHandlers } from './ipc-handlers';
+import { app, BaseWindow } from "electron";
+import { createMainWindow, getMainWindow } from "./window-manager";
+import { setupIpcHandlers } from "./ipc-handlers";
 
 // Set app name for macOS menu bar and dock
-app.setName('PromptMux');
+app.setName("PromptMux");
 
 app.whenReady().then(() => {
   setupIpcHandlers();
   createMainWindow();
 
   // Set dock title on macOS
-  if (process.platform === 'darwin' && app.dock) {
-    app.dock.setBadge('');
+  if (process.platform === "darwin" && app.dock) {
+    app.dock.setBadge("");
   }
 
-  app.on('activate', () => {
+  app.on("activate", () => {
     // On macOS, re-create window when dock icon is clicked and no windows exist
     const existingWindow = getMainWindow();
     if (existingWindow) {
@@ -25,9 +25,9 @@ app.whenReady().then(() => {
   });
 });
 
-app.on('window-all-closed', () => {
+app.on("window-all-closed", () => {
   // On macOS, apps typically stay active until Cmd+Q
-  if (process.platform !== 'darwin') {
+  if (process.platform !== "darwin") {
     app.quit();
   }
 });
