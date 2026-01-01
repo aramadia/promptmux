@@ -15,3 +15,14 @@ jobs:
 
       - name: Check formatting with prettier
         run: nix develop --command prettier --check .
+
+  nix-flake-check:
+    name: Nix flake check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/determinate-nix-action@v3
+
+      - name: Build Electron app (nix flake check)
+        run: nix flake check --option sandbox false
