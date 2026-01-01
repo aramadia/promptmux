@@ -47,6 +47,7 @@ BREAKING CHANGE: The entire UI has been redesigned and old configurations are no
 ## Examples
 
 ### Feature Addition (Minor Version Bump)
+
 ```
 feat: add dark mode toggle
 
@@ -54,6 +55,7 @@ Adds a dark mode toggle to the settings panel that persists user preference
 ```
 
 ### Bug Fix (Patch Version Bump)
+
 ```
 fix: resolve crash on startup with invalid config
 
@@ -61,6 +63,7 @@ Fixes issue where app would crash if config file was corrupted
 ```
 
 ### Breaking Change (Major Version Bump)
+
 ```
 feat!: migrate to new configuration format
 
@@ -69,6 +72,7 @@ Users will need to migrate their config files manually.
 ```
 
 ### Non-Release Commits
+
 ```
 docs: update installation instructions
 
@@ -109,17 +113,20 @@ If you need to manually create a release:
 ## Platform-Specific Build Details
 
 ### Windows
+
 - Format: NSIS installer
 - Architectures: x64, arm64
 - Output: `PromptMux-Setup-{version}.exe`
 
 ### macOS
+
 - Format: DMG
 - Architectures: x64 (Intel), arm64 (Apple Silicon)
 - Output: `PromptMux-{version}.dmg`
 - Note: Code signing is disabled by default (set `CSC_IDENTITY_AUTO_DISCOVERY=false`)
 
 ### Linux
+
 - Formats: AppImage, Debian package
 - Architecture: x64
 - Outputs:

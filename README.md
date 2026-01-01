@@ -280,6 +280,7 @@ Pre-built distributions are available on the [Releases page](https://github.com/
 ### For Contributors
 
 See [RELEASE.md](./RELEASE.md) for detailed information about:
+
 - Conventional commit format
 - How versioning works
 - Release workflow details
