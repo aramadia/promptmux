@@ -1,7 +1,7 @@
 {
   "name": "promptmux",
   "productName": "PromptMux",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Multi-AI chat interface - send prompts to ChatGPT, Gemini, and Claude simultaneously",
   "main": "dist/main/index.js",
   "scripts": {
@@ -15,22 +15,53 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@types/node": "^20.10.0",
+    "conventional-changelog-conventionalcommits": "^7.0.2",
     "electron": "^33.4.11",
     "electron-builder": "^25.1.8",
+    "semantic-release": "^23.0.0",
     "typescript": "^5.3.0"
   },
   "build": {
     "appId": "com.promptmux.app",
     "productName": "PromptMux",
-    "mac": {
-      "category": "public.app-category.productivity"
-    },
     "files": [
       "dist/**/*"
     ],
     "directories": {
       "output": "release"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility"
     }
   }
 }

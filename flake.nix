@@ -28,11 +28,11 @@
     in {
       build = pkgs.buildNpmPackage {
         pname = "promptmux";
-        version = "0.1.0";
+        version = "0.2.0";
         src = self;
 
-        # To update: run `nix build .#checks.x86_64-linux.build` and use the hash from the error
-        npmDepsHash = "sha256-bZKlgDKRYORPwswuPHhp1lcO/06bFslCx+UEi6nkKRY=";
+        # Updated for v0.2.0 with semantic-release dependencies
+        npmDepsHash = "sha256-nMnrKjU2IyHWPOW6Cegktk5t9bgThVe1+bhi6qebzYg=";
 
         # Skip electron binary download - we only need to verify TypeScript compiles
         env.ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
