@@ -265,6 +265,28 @@ When an AI service updates their UI:
 
 ---
 
+## Releases
+
+This project uses automated releases based on [Conventional Commits](https://www.conventionalcommits.org/). When commits are pushed to the main branch:
+
+- **Semantic versioning** is applied automatically based on commit types
+- **GitHub releases** are created with distribution builds for Windows, macOS, and Linux
+- **Changelog** is generated automatically
+
+### Download
+
+Pre-built distributions are available on the [Releases page](https://github.com/aramadia/promptmux/releases).
+
+### For Contributors
+
+See [RELEASE.md](./RELEASE.md) for detailed information about:
+- Conventional commit format
+- How versioning works
+- Release workflow details
+- Building distributions locally
+
+---
+
 ## License
 
 MIT
