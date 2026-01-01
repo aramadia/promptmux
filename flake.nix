@@ -31,8 +31,8 @@
         version = "0.2.0";
         src = self;
 
-        # Placeholder hash - will be updated from CI output
-        npmDepsHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+        # Updated for v0.2.0 with semantic-release dependencies
+        npmDepsHash = "sha256-nMnrKjU2IyHWPOW6Cegktk5t9bgThVe1+bhi6qebzYg=";
 
         # Skip electron binary download - we only need to verify TypeScript compiles
         env.ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
