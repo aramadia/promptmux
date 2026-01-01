@@ -18,22 +18,7 @@
       pkgs = nixpkgs.legacyPackages.${system};
       treefmtEval = treefmt-nix.lib.evalModule pkgs {
         projectRootFile = "flake.nix";
-        programs.prettier = {
-          enable = true;
-          includes = [
-            "*.ts"
-            "*.tsx"
-            "*.js"
-            "*.jsx"
-            "*.json"
-            "*.md"
-            "*.html"
-            "*.css"
-          ];
-          excludes = [
-            "package-lock.json"
-          ];
-        };
+        programs.prettier.enable = true;
       };
     in
       treefmtEval.config.build.wrapper);
