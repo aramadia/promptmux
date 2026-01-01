@@ -12,6 +12,23 @@
     supportedSystems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
     forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
   in {
+    checks = forAllSystems (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      electron-build = pkgs.stdenv.mkDerivation {
+        pname = "promptmux-electron-build";
+        version = "0.1.0";
+        src = self;
+        nativeBuildInputs = [pkgs.nodejs];
+        buildPhase = ''
+          export HOME="$TMPDIR"
+          npm ci
+          npm run build
+        '';
+        installPhase = "mkdir -p $out";
+      };
+    });
+
     formatter = forAllSystems (system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in
