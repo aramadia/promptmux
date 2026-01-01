@@ -28,7 +28,7 @@
     in {
       build = pkgs.buildNpmPackage {
         pname = "promptmux";
-        version = "0.1.0";
+        version = "0.2.0";
         src = self;
 
         # To update: run `nix build .#checks.x86_64-linux.build` and use the hash from the error
